@@ -1,0 +1,56 @@
+<!-- home/pharmacists_list.html -->
+{% extends "layouts/base.html" %}
+{% block title %} Total Pharmacists {% endblock %}
+
+{% block content %}
+    <h1>Total Pharmacists</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Phone Number</th>
+                <th>Address</th>
+                <th>Is Active</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pharmacist in pharmacists %}
+                <tr>
+                    <td>{{ pharmacist.user.id }}</td>
+                    <td>{{ pharmacist.user.username }}</td>
+                    <td>{{ pharmacist.user.email }}</td>
+                    <td>{{ pharmacist.phone_number }}</td>
+                    <td>{{ pharmacist.address }}</td>
+                    <td>{{ pharmacist.user.is_active }}</td>
+                    <td>
+                        <form method="post" action="{% url 'total_pharmacists' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="action"
+                                value="{% if pharmacist.user.is_active %}deactivate_user{% else %}activate_user{% endif %}">
+                            <input type="hidden" name="user_id" value="{{ pharmacist.user.id }}">
+                            <button type="submit">
+                                {% if pharmacist.user.is_active %}
+                                    Deactivate
+                                {% else %}
+                                    Activate
+                                {% endif %}
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+
+
+
+{% block javascripts %}
+    <!-- Include any specific scripts for this page if needed -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" crossorigin="anonymous"></script>
+    <script src="/static/assets/js/datatables-simple-demo.js"></script>
+{% endblock javascripts %}

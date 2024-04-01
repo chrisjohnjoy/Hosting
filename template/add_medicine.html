@@ -1,0 +1,429 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<head>
+  <!-- Include jQuery library -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  
+  <!-- Include jQuery UI library for datepicker -->
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+  <style>
+    /* Medicine Form Styles */
+    .medicine-form {
+      padding: 30px 0;
+    }
+
+    .container_8 {
+      background-color: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .medicine-form .section-title {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #333;
+    }
+
+    .medicine-form label {
+      font-weight: bold;
+    }
+
+    .medicine-form .form-group {
+      margin-bottom: 20px;
+    }
+
+    .medicine-form input[type="text"],
+    .medicine-form input[type="number"],
+    .medicine-form input[type="date"],
+    .medicine-form select,
+    .medicine-form textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    .medicine-form .btn-primary {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .medicine-form .btn-primary:hover {
+      background-color: #0056b3;
+    }
+
+    /* Optional: Style error messages */
+    .medicine-form .errorlist {
+      color: #ff0000;
+      margin-top: 5px;
+      font-size: 14px;
+    }
+
+    /* Style for Prescription Required checkbox */
+    .checkbox-input {
+      margin-right: 5px;
+      vertical-align: middle;
+    }
+
+    /* Style for the label */
+    .form-group label {
+      display: inline-block;
+      margin-right: 10px;
+      /* Adjust the spacing between label and checkbox */
+      vertical-align: middle;
+      font-weight: bold;
+      color: #333;
+    }
+
+    /* Optional: Style error messages for the checkbox */
+    .checkbox-error {
+      color: #ff0000;
+      margin-top: 5px;
+      font-size: 14px;
+    }
+  </style>
+
+</head>
+<!-- Add Medicine Form -->
+<section class="medicine-form">
+  <div class="container_8">
+    <h2 class="section-title">Add New Medicine</h2>
+    <div class="row">
+      <div class="col-md-6 offset-md-3">
+        <form id="medicine-form" method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          {{ form.non_field_errors }}
+          <div class="form-group">
+            <label for="{{ form.medicine_name.id_for_label }}">Medicine Name:</label>
+            {{ form.medicine_name }}
+            <span id="medicine-name-error" class="errorlist"></span>
+          </div>
+          <div class="form-group">
+            <label for="{{ form.requires_prescription.id_for_label }}">Requires Prescription:</label>
+            {{ form.requires_prescription }}
+            <span id="requires-prescription-error" class="errorlist"></span>
+          </div>
+          <div class="form-group">
+            <label for="{{ form.type_of_sell.id_for_label }}">Type of Sell:</label>
+            {{ form.type_of_sell }}
+            <span id="type-of-sell-error" class="errorlist"></span>
+          </div>
+          <div class="form-group">
+            <label for="{{ form.manufacturer.id_for_label }}">Manufacturer:</label>
+            {{ form.manufacturer }}
+            <span id="manufacturer-error" class="errorlist"></span>
+          </div>
+          <div class="form-group">
+            <label for="{{ form.salt.id_for_label }}">Salt:</label>
+            {{ form.salt }}
+            <span id="salt-error" class="errorlist"></span>
+          </div>
+          <div class="form-group">
+            <label for="{{ form.mrp.id_for_label }}">MRP:</label>
+            {{ form.mrp }}
+            <span id="mrp-error" class="errorlist"></span>
+          </div>
+          <div class="form-group">
+            <label for="{{ form.uses.id_for_label }}">Uses:</label>
+            {{ form.uses }}
+            <span id="uses-error" class="errorlist"></span>
+          </div>
+          <div class="form-group">
+            <label for="{{ form.alternate_medicines.id_for_label }}">Alternate Medicines:</label>
+            {{ form.alternate_medicines }}
+            <span id="alternate-medicines-error" class="errorlist"></span>
+          </div>
+          <div class="form-group">
+            <label for="{{ form.side_effects.id_for_label }}">Side Effects:</label>
+            {{ form.side_effects }}
+            <span id="side-effects-error" class="errorlist"></span>
+          </div>
+          <div class="form-group">
+            <label for="{{ form.how_to_use.id_for_label }}">How to Use:</label>
+            {{ form.how_to_use }}
+            <span id="how-to-use-error" class="errorlist"></span>
+          </div>
+          <div class="form-group">
+            <label for="{{ form.chemical_class.id_for_label }}">Chemical Class:</label>
+            {{ form.chemical_class }}
+            <span id="chemical-class-error" class="errorlist"></span>
+          </div>
+          <div class="form-group">
+            <label for="{{ form.habit_forming.id_for_label }}">Habit Forming:</label>
+            {{ form.habit_forming }}
+            <span id="habit-forming-error" class="errorlist"></span>
+          </div>
+          <div class="form-group">
+            <label for="{{ form.therapeutic_class.id_for_label }}">Therapeutic Class:</label>
+            {{ form.therapeutic_class }}
+            <span id="therapeutic-class-error" class="errorlist"></span>
+          </div>
+          <div class="form-group">
+            <label for="{{ form.action_class.id_for_label }}">Action Class:</label>
+            {{ form.action_class }}
+            <span id="action-class-error" class="errorlist"></span>
+          </div>
+          <div class="form-group">
+            <label for="{{ form.how_it_works.id_for_label }}">How It Works:</label>
+            {{ form.how_it_works }}
+            <span id="how-it-works-error" class="errorlist"></span>
+          </div>
+          <div class="form-group">
+            <label for="{{ form.batch_no.id_for_label }}">Batch Number:</label>
+            {{ form.batch_no }}
+            <span id="batch-no-error" class="errorlist"></span>
+          </div>
+          <div class="form-group">
+            <label for="{{ form.exp_date.id_for_label }}">Expiration Date:</label>
+            {{ form.exp_date }}
+            <span id="exp-date-error" class="errorlist"></span>
+          </div>
+          <div class="form-group">
+            <label for="{{ form.mfg_date.id_for_label }}">Manufacture Date:</label>
+            {{ form.mfg_date }}
+            <span id="mfg-date-error" class="errorlist"></span>
+          </div>
+          <div class="form-group">
+            <label for="{{ form.in_stock.id_for_label }}">In Stock:</label>
+            {{ form.in_stock }}
+            <span id="in-stock-error" class="errorlist"></span>
+          </div>
+          <div class="form-group">
+            <label for="{{ form.wholesale_price.id_for_label }}">Wholesale Price:</label>
+            {{ form.wholesale_price }}
+            <span id="wholesale-price-error" class="errorlist"></span>
+          </div>
+          <div class="form-group">
+            <label for="{{ form.medicine_image.id_for_label }}">Medicine Image:</label>
+            {{ form.medicine_image }}
+            <span id="medicine-image-error" class="errorlist"></span>
+          </div>
+          <div class="form-group">
+            <label for="{{ form.active_status.id_for_label }}">Active Status:</label>
+            {{ form.active_status }}
+            <span id="active-status-error" class="errorlist"></span>
+          </div>
+          <button type="submit" class="btn btn-primary">Add Medicine</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  $(document).ready(function () {
+    // Function to display error messages
+    function displayError(fieldId, errorMessage) {
+      $(`#${fieldId}-error`).html(errorMessage);
+    }
+
+    // Function to clear error messages
+    function clearError(fieldId) {
+      $(`#${fieldId}-error`).html('');
+    }
+
+    // Input field blur event listeners
+    $("#id_medicine_name").blur(function () {
+      const medicineName = $(this).val().trim();
+      if (!medicineName) {
+        displayError("medicine-name", "Medicine name is required.");
+      } else {
+        clearError("medicine-name");
+      }
+    });
+
+    $("#id_requires_prescription").blur(function () {
+      const requiresPrescription = $(this).val().trim();
+      if (!requiresPrescription) {
+        displayError("requires-prescription", "Prescription requirement is required.");
+      } else {
+        clearError("requires-prescription");
+      }
+    });
+
+    $("#id_type_of_sell").blur(function () {
+      const typeOfSell = $(this).val().trim();
+      if (!typeOfSell) {
+        displayError("type-of-sell", "Type of sell is required.");
+      } else {
+        clearError("type-of-sell");
+      }
+    });
+
+    $("#id_manufacturer").blur(function () {
+      const manufacturer = $(this).val().trim();
+      if (!manufacturer) {
+        displayError("manufacturer", "Manufacturer is required.");
+      } else {
+        clearError("manufacturer");
+      }
+    });
+
+    $("#id_salt").blur(function () {
+      const salt = $(this).val().trim();
+      if (!salt) {
+        displayError("salt", "Salt is required.");
+      } else {
+        clearError("salt");
+      }
+    });
+
+    $("#id_mrp").blur(function () {
+      const mrp = parseFloat($(this).val());
+      if (isNaN(mrp) || mrp <= 0) {
+        displayError("mrp", "MRP must be a positive number.");
+      } else {
+        clearError("mrp");
+      }
+    });
+
+    $("#id_uses").blur(function () {
+      const uses = $(this).val().trim();
+      if (!uses) {
+        displayError("uses", "Uses is required.");
+      } else {
+        clearError("uses");
+      }
+    });
+
+    $("#id_alternate_medicines").blur(function () {
+      const alternateMedicines = $(this).val().trim();
+      if (!alternateMedicines) {
+        displayError("alternate-medicines", "Alternate medicines is required.");
+      } else {
+        clearError("alternate-medicines");
+      }
+    });
+
+    $("#id_side_effects").blur(function () {
+      const sideEffects = $(this).val().trim();
+      if (!sideEffects) {
+        displayError("side-effects", "Side effects is required.");
+      } else {
+        clearError("side-effects");
+      }
+    });
+
+    $("#id_how_to_use").blur(function () {
+      const howToUse = $(this).val().trim();
+      if (!howToUse) {
+        displayError("how-to-use", "How to use is required.");
+      } else {
+        clearError("how-to-use");
+      }
+    });
+
+    $("#id_chemical_class").blur(function () {
+      const chemicalClass = $(this).val().trim();
+      if (!chemicalClass) {
+        displayError("chemical-class", "Chemical class is required.");
+      } else {
+        clearError("chemical-class");
+      }
+    });
+
+    $("#id_habit_forming").blur(function () {
+      const habitForming = $(this).val().trim();
+      if (!habitForming) {
+        displayError("habit-forming", "Habit forming is required.");
+      } else {
+        clearError("habit-forming");
+      }
+    });
+
+    $("#id_therapeutic_class").blur(function () {
+      const therapeuticClass = $(this).val().trim();
+      if (!therapeuticClass) {
+        displayError("therapeutic-class", "Therapeutic class is required.");
+      } else {
+        clearError("therapeutic-class");
+      }
+    });
+
+    $("#id_action_class").blur(function () {
+      const actionClass = $(this).val().trim();
+      if (!actionClass) {
+        displayError("action-class", "Action class is required.");
+      } else {
+        clearError("action-class");
+      }
+    });
+
+    $("#id_how_it_works").blur(function () {
+      const howItWorks = $(this).val().trim();
+      if (!howItWorks) {
+        displayError("how-it-works", "How it works is required.");
+      } else {
+        clearError("how-it-works");
+      }
+    });
+
+    $("#id_batch_no").blur(function () {
+      const batchNo = $(this).val().trim();
+      if (!batchNo) {
+        displayError("batch-no", "Batch number is required.");
+      } else {
+        clearError("batch-no");
+      }
+    });
+
+    $("#id_exp_date").blur(function () {
+      const expDate = $(this).val().trim();
+      if (!expDate) {
+        displayError("exp-date", "Expiration date is required.");
+      } else {
+        clearError("exp-date");
+      }
+    });
+
+    $("#id_mfg_date").blur(function () {
+      const mfgDate = $(this).val().trim();
+      if (!mfgDate) {
+        displayError("mfg-date", "Manufacture date is required.");
+      } else {
+        clearError("mfg-date");
+      }
+    });
+
+    $("#id_in_stock").blur(function () {
+      const inStock = parseInt($(this).val());
+      if (isNaN(inStock) || inStock < 0) {
+        displayError("in-stock", "Invalid stock quantity.");
+      } else {
+        clearError("in-stock");
+      }
+    });
+
+    $("#id_wholesale_price").blur(function () {
+      const wholesalePrice = parseFloat($(this).val());
+      if (isNaN(wholesalePrice) || wholesalePrice < 0) {
+        displayError("wholesale-price", "Invalid wholesale price.");
+      } else {
+        clearError("wholesale-price");
+      }
+    });
+
+    // ... (remaining validation logic)
+
+    // Form submission event handling
+    $("#medicine-form").submit(function (event) {
+      // Prevent the form from submitting if there are validation errors
+      if ($(".errorlist").text().length > 0) {
+        event.preventDefault();
+      }
+    });
+  });
+</script>
+
+{% endblock content %}

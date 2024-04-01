@@ -1,0 +1,37 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Assigned Orders List {% endblock %} 
+
+{% block stylesheets %}
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+{% endblock stylesheets %}
+
+{% block content %}
+    <div class="container">
+        <h1 class="mt-4">Assigned Orders List</h1>
+        <table class="table table-bordered mt-4">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Status</th>
+                    <th>Delivery Person</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for delivery in assigned_deliveries %}
+                <tr>
+                    <td>{{ delivery.order_id }}</td>
+                    <td>{{ delivery.status }}</td>
+                    <td>{{ delivery.delivery_person.user.name }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock content %}
+
+{% block javascripts %}
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+{% endblock javascripts %}

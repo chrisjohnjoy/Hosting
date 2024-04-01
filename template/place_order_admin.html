@@ -1,0 +1,43 @@
+<!-- order_placement.html -->
+
+{% extends "layouts/base.html" %}
+{% block title %}Place Order{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Place Order</h2>
+    <form method="post" id="order-placement-form">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="medicine">Medicine:</label>
+            <select name="medicine" id="medicine" class="form-control">
+                {% for medicine in medicines %}
+                    <option value="{{ medicine.id }}" data-company="{{ medicine.manufacturer }}">{{ medicine.medicine_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="company_name">Manufacturer:</label>
+            <input type="text" name="company_name" id="company_name" class="form-control" readonly>
+        </div>
+        <div class="form-group">
+            <label for="quantity">Quantity:</label>
+            <input type="number" name="quantity" id="quantity" class="form-control" min="1">
+        </div>
+        <button type="submit" class="btn btn-primary">Place Order</button>
+    </form>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var medicineSelect = document.getElementById("medicine");
+        var companyNameInput = document.getElementById("company_name");
+
+        medicineSelect.addEventListener("change", function() {
+            var selectedOption = medicineSelect.options[medicineSelect.selectedIndex];
+            var companyName = selectedOption.getAttribute("data-company");
+            companyNameInput.value = companyName;
+        });
+    });
+</script>
+{% endblock %}

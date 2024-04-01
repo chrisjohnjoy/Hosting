@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+  /* Style the container */
+  .container-7 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    margin-left: 25%;
+    max-width: 800px;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-family: Arial, sans-serif;
+  }
+
+  /* Style the heading */
+  .success-heading {
+    color: #28a745;
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+
+  /* Style the success message */
+  .success-message {
+    color: #333;
+    font-size: 18px;
+    margin-bottom: 15px;
+  }
+
+  /* Style the details sections */
+  .details-section {
+    margin-top: 20px;
+  }
+
+  /* Style the table */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+  }
+
+  th,
+  td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+  }
+
+  th {
+    background-color: #f5f5f5;
+  }
+
+  /* Style the list items */
+  ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  li {
+    margin-bottom: 10px;
+  }
+
+  /* Style the download button and center it */
+  .download-btn {
+    display: block;
+    margin: 0 auto; /* Center the button horizontally */
+    padding: 10px 15px;
+    background-color: #007bff; /* Blue color, you can change it */
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease; /* Add a smooth transition effect */
+  }
+
+  .download-btn:hover {
+    background-color: #0056b3; /* Darker blue color on hover, you can change it */
+  }
+
+  .download-btn {
+    display: block;
+    margin: 20px auto; /* Adjust margin as needed */
+    padding: 10px 15px;
+    background-color: #007bff; /* Blue color, you can change it */
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease; /* Add a smooth transition effect */
+  }
+
+  .download-btn:hover {
+    background-color: #0056b3; /* Darker blue color on hover, you can change it */
+  }
+</style>
+
+<div class="container-7">
+  <h2 class="success-heading">Payment Successful</h2>
+  <p class="success-message">Thank you for your order, {{ order.user.customer.name }}!</p>
+  <p class="success-message">Your payment was successful, and your order is confirmed.</p>
+
+  <div class="details-section">
+    <p>Medicines:</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Medicine</th>
+          <th>Quantity</th>
+          <th>Price</th>
+          <th>Expiry Date</th> <!-- Add this line for expiry date -->
+        </tr>
+      </thead>
+      <tbody>
+        {% for order_item in order.orderitem_set.all %}
+        <tr>
+          <td>{{ order_item.medicine.medicine_name }}</td>
+          <td>{{ order_item.quantity }}</td>
+          <td>₹{{ order_item.medicine.mrp }}</td>
+          <td>{{ order_item.medicine.exp_date }}</td> <!-- Add this line for expiry date -->
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="details-section">
+    <p>Order details:</p>
+    <ul>
+      <li>Order ID: {{ order.id }}</li>
+      <li>Total Amount: ₹{{ order.total_amount }}</li>
+      <li>Order Date: {{ order.order_date }}</li>
+      <li>Delivery Date: {{ order.delivery_date }}</li>
+    </ul>
+  </div>
+
+  <div class="details-section">
+    <p>Customer details:</p>
+    <ul>
+      <li>Name: {{ order.user.customer.name }}</li>
+      <li>Phone Number: {{ order.user.customer.phone_number }}</li>
+      <li>Address: {{ order.user.customer.address }}</li>
+    </ul>
+  </div>
+
+  <p class="success-message">Thank you for choosing Online Medical Store!</p>
+  <a href="{% url 'download_invoice' order.id %}" class="download-btn">Download PDF</a>
+
+</div>
+
+{% endblock %}

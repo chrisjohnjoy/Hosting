@@ -1,0 +1,65 @@
+<!-- base_medical_representative.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>{% block title %}Medical Representative Dashboard{% endblock %}</title>
+    <!-- Add your CSS styles or link to external stylesheets here -->
+    <style>
+        /* Add your custom styles for the sidebar here */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .sidebar {
+            height: 100%;
+            width: 250px;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            background-color: #333;
+            padding-top: 20px;
+            color: #fff;
+            text-align: center;
+        }
+
+        .sidebar a {
+            padding: 8px 8px 8px 32px;
+            text-decoration: none;
+            font-size: 18px;
+            color: #818181;
+            display: block;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover {
+            color: #f1f1f1;
+        }
+
+        .content {
+            margin-left: 250px;
+            padding: 16px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="sidebar">
+        <h2>Medical Rep</h2>
+        <a href="{% url 'medical_rep_dashboard' %}">Dashboard</a>
+        <a href="{% url 'appointments' %}">Appointments</a>
+        <!-- Add more sidebar links as needed -->
+    </div>
+
+    <div class="content">
+        {% block content %}{% endblock %}
+    </div>
+
+</body>
+
+</html>

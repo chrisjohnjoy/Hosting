@@ -1,0 +1,118 @@
+<!-- purchase_orders.html -->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Admin Purchase Orders</title>
+    <style>
+        /* Apply some basic styling similar to admin_dashboard.html */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            margin: 0;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-top: 20px;
+        }
+
+        table.user-list {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #ccc;
+        }
+
+        table.user-list th,
+        table.user-list td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+
+        table.user-list th {
+            background-color: #333;
+            color: #fff;
+        }
+
+        tr.user {
+            background-color: #fff;
+        }
+
+        tr.user:nth-child(even) {
+            background-color: #f0f0f0;
+        }
+
+        button.deactivate,
+        button.activate {
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+        }
+
+        button.deactivate {
+            background-color: #f00;
+        }
+
+        button.activate {
+            background-color: #0f0;
+        }
+
+        .back-to-dashboard {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            margin-top: 20px;
+            display: inline-block;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Admin Purchase Orders
+        <button class="back-to-dashboard" onclick="location.href='{% url 'admin_dashboard' %}'">Back to Admin Dashboard</button>
+
+    </h1>
+
+    <h2>Purchase Orders</h2>
+    <table class="user-list">
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Medicine Name</th>
+                <th>Quantity</th>
+                <th>Company Name</th>
+                <th>Status</th>
+                <th>Timestamp</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in purchase_orders %}
+            <tr class="user">
+                <td>{{ order.id }}</td>
+                <td>{{ order.medicine.medicine_name }}</td>
+                <td>{{ order.quantity }}</td>
+                <td>{{ order.company_name }}</td>
+                <td>{{ order.status }}</td>
+                <td>{{ order.timestamp }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+</body>
+
+</html>

@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+  /* Style the container */
+  .container-7 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    margin-left: 25%;
+    max-width: 800px;
+    background-color: #f9f9f9;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+
+  /* Style the error heading */
+  .error-heading {
+    color: #dc3545;
+    /* Red color for error */
+  }
+
+  /* Style the error message */
+  .error-message {
+    color: #333;
+    /* Dark text color */
+  }
+
+  /* Style the additional links */
+  .additional-links {
+    margin-top: 20px;
+    /* Add styles for links if needed */
+  }
+</style>
+
+<div class="container-7">
+  <h2 class="error-heading">Payment Failed</h2>
+  <p class="error-message">Sorry, we encountered an issue processing your payment.</p>
+  <p class="error-message">Please try again or contact support for assistance.</p>
+
+  <div class="additional-links">
+    <!-- You can provide links to retry the payment or contact support -->
+  </div>
+</div>
+{% endblock %}

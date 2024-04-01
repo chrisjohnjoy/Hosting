@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+  <!-- About section -->
+  <section class="about_section layout_padding">
+    <div class="container">
+      <div class="custom_heading-container ">
+        <h2>
+          About Us
+        </h2>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="img-box">
+            <img src="{% static 'images/about-medicine.png' %}" alt="About Medicine">
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="detail-box">
+            <p>
+              Welcome to our online medical store! We aim to provide you with easy access to a wide range of medical products and supplies. Whether you're in need of prescription medications, over-the-counter remedies, or health-related accessories, we've got you covered. Our team is dedicated to ensuring a seamless shopping experience, with fast delivery and excellent customer service.
+            </p>
+            <p>
+              With our user-friendly website and secure payment options, you can shop for all your healthcare needs from the comfort of your home. Our inventory includes products from trusted brands and suppliers, so you can trust the quality and authenticity of every item you purchase.
+            </p>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+{% endblock content %}

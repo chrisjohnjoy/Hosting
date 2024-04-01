@@ -1,0 +1,42 @@
+{% extends "layouts/base.html" %}
+{% block title %} Total Medicines {% endblock %}
+
+{% block content %}
+    <h1>Total Medicines</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Medicine Name</th>
+                <th>Manufacturer</th>
+                <th>Active Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for medicine in medicines %}
+                <tr>
+                    <td>{{ medicine.medicine_id }}</td>
+                    <td>{{ medicine.medicine_name }}</td>
+                    <td>{{ medicine.manufacturer }}</td>
+                    <td>{{ medicine.active_status }}</td>
+                    <td>
+                        <form method="post" action="{% url 'total_medicines' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="action"
+                                value="{% if medicine.active_status %}deactivate_medicine{% else %}activate_medicine{% endif %}">
+                            <input type="hidden" name="medicine_id" value="{{ medicine.medicine_id }}">
+                            <button type="submit">
+                                {% if medicine.active_status %}
+                                    Deactivate
+                                {% else %}
+                                    Activate
+                                {% endif %}
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

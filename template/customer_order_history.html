@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+  /* Style the container */
+  .container-7 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    margin-left: 10%;
+    max-width: 80%;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+
+  /* Style the order history heading */
+  .order-history-heading {
+    color: #333;
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+
+  /* Style the order details table */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+
+  th,
+  td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+  }
+
+  th {
+    background-color: #f5f5f5;
+  }
+
+  /* Style the additional links */
+  .additional-links {
+    margin-top: 20px;
+  }
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+
+  li {
+    margin-bottom: 10px;
+  }
+
+  /* Style the month filter */
+  .month-filter {
+    margin-top: 10px;
+  }
+
+  .cancel-order-button {
+    background-color: #ff6666;
+    color: #fff;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  /* Style the refund notification */
+  .refund-notification {
+    margin-top: 10px;
+    color: #ff6666;
+    font-size: 16px;
+  }
+</style>
+
+<div class="container-7">
+  <h2 class="order-history-heading">Order History</h2>
+<!-- Add a form for date range filtering -->
+<form method="get" class="date-range-filter">
+  <label for="start_date">Start Date:</label>
+  <input type="date" name="start_date" id="start_date">
+
+  <label for="end_date">End Date:</label>
+  <input type="date" name="end_date" id="end_date">
+
+  <button type="submit">Filter</button>
+</form>
+
+
+  <table>
+    <thead>
+      <tr>
+        <th>Order ID</th>
+        <th>Total Amount</th>
+        <th>Order Date</th>
+        <th>Payment Status</th>
+        <th>Delivery status</th>
+        <th>Prescription Verified</th> <!-- Add this line for the new column -->
+        <!-- Add other relevant order details based on your model -->
+      </tr>
+    </thead>
+    <tbody>
+      {% for order in orders %}
+      <tr>
+        <td><a href="{% url 'track_order' order_id=order.id %}">{{ forloop.counter }}</a></td>
+        <td>₹{{ order.total_amount }}</td>
+        <td>{{ order.order_date }}</td>
+        <td>{{ order.payment_status }}</td>
+        <td>
+          {% if order.deliveries %}
+            {% for delivery in order.deliveries %}
+              {{ delivery.status }}
+            {% endfor %}
+          {% else %}
+            Pending
+          {% endif %}
+        </td>
+        
+        <td>
+            {% if order.prescription.is_verified %}
+              Verified
+            {% else %}
+              Not Verified
+            {% endif %}
+        </td>
+        
+      </tr>
+      {% endfor %}
+    </tbody>
+    
+    
+    
+  </table>
+
+  <div class="additional-links">
+    <!-- You can also provide links to other relevant pages, e.g., account, homepage, etc. -->
+  </div>
+</div>
+
+{% endblock %}

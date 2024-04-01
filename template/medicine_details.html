@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+  .medicine-detail-container {
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+  }
+
+  .medicine-image {
+    max-width: 100%;
+    max-height: 300px;
+    width: auto;
+    height: auto;
+    border-radius: 5px;
+    object-fit: contain;
+    margin-bottom: 20px;
+  }
+
+  .medicine-name {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 10px;
+  }
+
+  .medicine-description {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 20px;
+  }
+
+  .medicine-price {
+    font-size: 18px;
+    color: #007bff;
+    margin-bottom: 10px;
+  }
+
+  .medicine-stock {
+    font-size: 16px;
+    color: #28a745;
+    margin-bottom: 20px;
+  }
+
+  .medicine-details h4 {
+    font-size: 20px;
+    color: #333;
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
+
+  .medicine-details ul {
+    list-style-type: none;
+    padding: 0;
+  }
+
+  .medicine-details li {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 10px;
+  }
+
+  .medicine-usage h4 {
+    font-size: 20px;
+    color: #333;
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
+
+  .medicine-usage p {
+    font-size: 16px;
+    color: #555;
+  }
+
+  .medicine-action {
+    margin-top: 20px;
+  }
+
+  .add-to-cart-form button {
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .out-of-stock-warning p {
+    color: #dc3545;
+  }
+</style>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-8">
+      <div class="medicine-detail-container">
+        <img src="{{ medicine.medicine_image.url }}" alt="{{ medicine.medicine_name }}" class="medicine-image">
+        <h3 class="medicine-name">{{ medicine.medicine_name }}</h3>
+        <p class="medicine-description">{{ medicine.uses }}</p>
+        <p class="medicine-price">Price: ₹{{ medicine.mrp }}</p>
+
+        <div class="medicine-details">
+          <h4>Medicine Details</h4>
+          <ul>
+            <li><strong>Manufacturer:</strong> {{ medicine.manufacturer }}</li>
+            <li><strong>Chemical Class:</strong> {{ medicine.chemical_class }}</li>
+            <li><strong>Therapeutic Class:</strong> {{ medicine.therapeutic_class }}</li>
+            <li><strong>Batch Number:</strong> {{ medicine.batch_no }}</li>
+            <li><strong>Expiry Date:</strong> {{ medicine.exp_date }}</li>
+            <li><strong>Manufacturing Date:</strong> {{ medicine.mfg_date }}</li>
+            <li><strong>Habit Forming:</strong> {% if medicine.habit_forming %}Yes{% else %}No{% endif %}</li>
+            <li><strong>Prescription Required:</strong> {% if medicine.requires_prescription %}Yes{% else %}No{% endif %}</li>
+            
+          </ul>
+        </div>
+
+        <div class="medicine-usage">
+          <h4>Usage Information</h4>
+          <p>{{ medicine.how_to_use }}</p>
+        </div>
+
+        <div class="medicine-action">
+          {% if user.is_authenticated and user.is_customer %}
+            {% if medicine.in_stock >= 1 %}
+              <div class="add-to-cart-form" id="add-to-cart-{{ medicine.medicine_id }}">
+                <form method="post" action="{% url 'add_to_cart' medicine.medicine_id %}" id="add-to-cart-form-{{ medicine.medicine_id }}">
+                  {% csrf_token %}
+                  <button type="submit">Add to Cart</button>
+                </form>
+              </div>
+            {% else %}
+              <div class="out-of-stock-warning">
+                <p>This product is currently out of stock.</p>
+              </div>
+            {% endif %}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,26 @@
+<!-- main_project/templates/main_project/latest_orders.html -->
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+  <h2>All Latest Orders</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Order ID</th>
+        <th>Total Amount</th>
+        <th>Order Date</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for order in latest_orders %}
+        <tr>
+          <td>{{ order.id }}</td>
+          <td>{{ order.total_amount }}</td>
+          <td>{{ order.order_date }}</td>
+          <td><a href="{% url 'order_details' order.id %}">View Details</a></td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

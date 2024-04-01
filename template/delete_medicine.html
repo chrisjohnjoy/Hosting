@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<head>
+    <style>
+        /* CSS for delete_medicine.html */
+/* CSS for delete_medicine.html container */
+.container_8 {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.container_8 h2 {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.container_8 p {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.container_8 .medicine-details {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.container_8 .medicine-image {
+  max-width: 200px;
+  max-height: 200px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-right: 20px;
+}
+
+.container_8 .medicine-info {
+  flex-grow: 1;
+}
+
+.container_8 button.btn-danger {
+  background-color: #dc3545;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.container_8 button.btn-danger:hover {
+  background-color: #c82333;
+}
+
+.container_8 a.btn-secondary {
+  background-color: #6c757d;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 16px;
+  text-decoration: none;
+}
+
+.container_8 a.btn-secondary:hover {
+  background-color: #5a6268;
+}
+
+/* Add any additional styling as needed */
+
+    </style>
+</head>
+<div class="container_8">
+  <h2>Delete Medicine</h2>
+  <p>Are you sure you want to delete the following medicine?</p>
+  <div class="medicine-details">
+    <img src="{{ medicine.medicine_image.url }}" alt="{{ medicine.medicine_name }}" class="medicine-image">
+    <div class="medicine-info">
+      <p><strong>Medicine Name:</strong> {{ medicine.medicine_name }}</p>
+      <p><strong>Medicine Type:</strong> {{ medicine.type_of_sell }}</p>
+      <p><strong>Batch Number:</strong> {{ medicine.batch_no }}</p>
+      <p><strong>Price:</strong> ₹{{ medicine.mrp }}</p>
+    </div>
+  </div>
+  <!-- Add a confirmation form for deleting the medicine -->
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a href="{% url 'medicine_list' %}" class="btn btn-secondary">Cancel</a>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,256 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+  /* Medicine Catalog Section */
+  .medicine-catalog {
+    background-color: #FFFFFF;
+    /* Change to the desired background color */
+    color: #000000;
+    /* Change to the desired text color */
+  }
+
+  /* Center the content within a container */
+  .container_7 {
+    max-width: 1200px;
+    /* Adjust the maximum width as needed */
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .section-title {
+    font-size: 24px;
+    color: #333;
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .medicine-card {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    transition: transform 0.2s;
+    height: 100%;
+    /* Set a fixed height for the card container */
+  }
+
+  .medicine-card:hover {
+    transform: translateY(-5px);
+  }
+
+  .medicine-image {
+    max-width: 100%;
+    max-height: 100%;
+    /* Ensure the image fits within the container */
+    width: auto;
+    height: auto;
+    border-radius: 5px;
+    object-fit: contain;
+    /* Maintain aspect ratio while fitting */
+  }
+
+  .medicine-name {
+    font-size: 20px;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    color: #333;
+  }
+
+  .medicine-description {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 10px;
+  }
+
+  .medicine-price {
+    font-size: 16px;
+    color: #007bff;
+  }
+
+  .medicine-stock {
+    font-size: 14px;
+    color: #28a745;
+  }
+
+  /* Pagination Styles */
+  /* Paginator Styles */
+  .pagination {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+  }
+
+  .pagination li {
+    margin: 0 5px;
+    display: inline-block;
+  }
+
+  .pagination a,
+  .pagination .current-page {
+    text-decoration: none;
+    color: #007bff;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 5px 10px;
+    transition: background-color 0.2s, color 0.2s;
+  }
+
+  .pagination a:hover {
+    background-color: #007bff;
+    color: #fff;
+  }
+
+  .pagination .current-page {
+    background-color: #007bff;
+    color: #fff;
+  }
+
+  .quantity-input {
+    width: 50px;
+    /* Adjust the width as needed */
+    text-align: center;
+  }
+
+  /* Style the items per page selection form */
+  #items {
+    padding: 5px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-right: 10px;
+  }
+
+  button[type="submit"] {
+    background-color: #007bff;
+    /* Blue background color */
+    color: #fff;
+    /* White text color */
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+
+  button[type="submit"]:hover {
+    background-color: #0056b3;
+    /* Darker blue background color on hover */
+  }
+
+  /* Style the container holding the form */
+  .items-per-page-container {
+    margin-bottom: 20px;
+    text-align: right;
+  }
+</style>
+
+</head>
+
+<body>
+  <!-- Medicine Catalog Section -->
+  <section class="medicine-catalog">
+    <div class="container_7">
+      <h2 class="section-title">Medicine Cataloge</h2>
+
+      <form method="get" action="{% url 'medicine_list' %}">
+        <label for="sort_by">Sort by:</label>
+        <select name="sort_by" id="sort_by">
+            <option value="mrp">Price</option>
+            <option value="medicine_name">Medicine Name</option>
+            <!-- Add other sorting options as needed -->
+        </select>
+    
+        <label for="type_of_sell">Type of Sell:</label>
+        <select name="type_of_sell" id="type_of_sell">
+            <option value="" {% if not selected_type_of_sell %}selected{% endif %}>All</option>
+            {% for option in type_of_sell_options %}
+                <option value="{{ option }}" {% if option == selected_type_of_sell %}selected{% endif %}>{{ option }}</option>
+            {% endfor %}
+        </select>
+    
+        <input type="submit" value="Apply Filters">
+    </form>
+
+      <div class="row">
+        {% for medicine in medicines %}
+        <div class="col-md-4">
+          <div class="medicine-card">
+            <a href="{% url 'medicine_details' medicine_id=medicine.medicine_id %}">
+              <img src="{{ medicine.medicine_image.url }}" alt="{{ medicine.medicine_name }}" class="medicine-image">
+              <h3 class="medicine-name">{{ medicine.medicine_name }} {% if medicine.salt %}({{ medicine.salt }}){% endif %}</h3>
+            </a>      
+            <p class="medicine-description">{{ medicine.how_it_works }}</p>
+            <p class="medicine-price">Price: ₹{{ medicine.mrp }}</p>
+
+            {% if user.is_authenticated %}
+            {% if user.is_employee %}
+            <p class="medicine-stock">Stock: {{ medicine.in_stock }}</p>
+            <div class="medicine-actions">
+              <a href="{% url 'edit_medicine' medicine.medicine_id %}" class="btn btn-primary btn-sm">Edit</a>
+              <a href="{% url 'delete_medicine' medicine.medicine_id %}" class="btn btn-danger btn-sm">Delete</a>
+            </div>
+            {% elif user.is_customer %}
+            {% if medicine.in_stock >= 1 %}
+            <p class="medicine-stock">In Stock</p>
+            <div class="add-to-cart-form" id="add-to-cart-{{ medicine.medicine_id }}">
+              {% if medicine.requires_prescription %}
+                <p class="medicine-prescription" style="color: red;">Prescription Required</p>
+              {% endif %}
+              <form method="post" action="{% url 'add_to_cart' medicine.medicine_id %}"
+                id="add-to-cart-form-{{ medicine.medicine_id }}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary btn-sm">Add to Cart</button>
+              </form>
+            </div>
+            {% else %}
+            <p class="medicine-stock">Out of Stock</p>
+            <div class="out-of-stock-warning">
+              <p>This product is currently out of stock.</p>
+            </div>
+            {% endif %}
+            {% endif %}
+            {% else %}
+            <p class="medicine-stock">
+              <a href="{% url 'login' %}">Log in to buy</a>
+            </p>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="pagination">
+        <span>Page {{ medicines.number }} of {{ medicines.paginator.num_pages }}.</span>
+        <ul>
+          {% if medicines.has_previous %}
+              <li><a href="?page=1{% if selected_type_of_sell %}&type_of_sell={{ selected_type_of_sell }}{% endif %}">First</a></li>
+              <li><a href="?page={{ medicines.previous_page_number }}{% if selected_type_of_sell %}&type_of_sell={{ selected_type_of_sell }}{% endif %}">Previous</a></li>
+          {% endif %}
+      
+          {% for num in medicines.paginator.page_range %}
+              {% if num > medicines.number|add:"-2" and num < medicines.number|add:"3" %}
+                  <li {% if num == medicines.number %}class="current-page" {% endif %}>
+                      <a href="?page={{ num }}{% if selected_type_of_sell %}&type_of_sell={{ selected_type_of_sell }}{% endif %}">{{ num }}</a>
+                  </li>
+              {% endif %}
+          {% endfor %}
+      
+          {% if medicines.has_next %}
+              <li><a href="?page={{ medicines.next_page_number }}{% if selected_type_of_sell %}&type_of_sell={{ selected_type_of_sell }}{% endif %}">Next</a></li>
+              <li><a href="?page={{ medicines.paginator.num_pages }}{% if selected_type_of_sell %}&type_of_sell={{ selected_type_of_sell }}{% endif %}">Last</a></li>
+          {% endif %}
+      </ul>
+      
+    </div>
+
+
+
+    </div>
+  </section>
+ 
+  {% endblock %}

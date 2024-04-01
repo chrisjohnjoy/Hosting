@@ -1,0 +1,312 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<head>
+    <style>
+        /* Edit Medicine Form Styles */
+        .hero_area {
+            height: 100%;
+        }
+
+        .edit-medicine-form {
+            padding: 30px 0;
+        }
+
+        .container_7 {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .edit-medicine-form .section-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .edit-medicine-form label {
+            font-weight: bold;
+        }
+
+        .edit-medicine-form .form-group {
+            margin-bottom: 20px;
+        }
+
+        .edit-medicine-form input[type="text"],
+        .edit-medicine-form input[type="number"],
+        .edit-medicine-form select,
+        .edit-medicine-form textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .edit-medicine-form .btn-primary {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .edit-medicine-form .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        /* Optional: Style error messages */
+        .edit-medicine-form .errorlist {
+            color: #ff0000;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+
+        /* Style for displaying current medicine image */
+        .current-medicine-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+
+        /* Style for Prescription Required checkbox */
+        .checkbox-input {
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+
+        /* Style for the label */
+        .form-group label {
+            display: inline-block;
+            margin-right: 10px;
+            /* Adjust the spacing between label and checkbox */
+            vertical-align: middle;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* Optional: Style error messages for the checkbox */
+        .checkbox-error {
+            color: #ff0000;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<!-- Edit Medicine Form -->
+<section class="edit-medicine-form">
+    <div class="container_7">
+        <h2 class="section-title">Edit Medicine</h2>
+        <form method="post" enctype="multipart/form-data" id="edit-medicine-form">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+
+            <!-- Display current medicine image -->
+            <div class="form-group">
+                <label for="current_medicine_image">Current Medicine Image:</label>
+                <img src="{{ medicine.medicine_image.url }}" alt="{{ medicine.medicine_name }}"
+                    class="current-medicine-image">
+            </div>
+
+            <!-- Medicine Name -->
+            <div class="form-group">
+                <label for="{{ form.medicine_name.id_for_label }}">Medicine Name:</label>
+                {{ form.medicine_name }}
+                {{ form.medicine_name.errors }}
+            </div>
+
+            <!-- Type of Sell -->
+            <div class="form-group">
+                <label for="{{ form.type_of_sell.id_for_label }}">Type of Sell:</label>
+                {{ form.type_of_sell }}
+                {{ form.type_of_sell.errors }}
+            </div>
+
+            <!-- Manufacturer -->
+            <div class="form-group">
+                <label for="{{ form.manufacturer.id_for_label }}">Manufacturer:</label>
+                {{ form.manufacturer }}
+                {{ form.manufacturer.errors }}
+            </div>
+
+            <!-- Salt -->
+            <div class="form-group">
+                <label for="{{ form.salt.id_for_label }}">Salt:</label>
+                {{ form.salt }}
+                {{ form.salt.errors }}
+            </div>
+
+            <!-- MRP -->
+            <div class="form-group">
+                <label for="{{ form.mrp.id_for_label }}">MRP:</label>
+                {{ form.mrp }}
+                {{ form.mrp.errors }}
+                <span id="mrp_error" class="errorlist"></span> <!-- Error message container for MRP -->
+            </div>
+
+            <!-- Uses -->
+            <div class="form-group">
+                <label for="{{ form.uses.id_for_label }}">Uses:</label>
+                {{ form.uses }}
+                {{ form.uses.errors }}
+            </div>
+
+            <!-- Chemical Class -->
+            <div class="form-group">
+                <label for="{{ form.chemical_class.id_for_label }}">Chemical Class:</label>
+                {{ form.chemical_class }}
+                {{ form.chemical_class.errors }}
+            </div>
+
+            <!-- Habit Forming -->
+            <div class="form-group">
+                <label for="{{ form.habit_forming.id_for_label }}">Habit Forming:</label>
+                {{ form.habit_forming }}
+                {{ form.habit_forming.errors }}
+            </div>
+
+            <!-- Therapeutic Class -->
+            <div class="form-group">
+                <label for="{{ form.therapeutic_class.id_for_label }}">Therapeutic Class:</label>
+                {{ form.therapeutic_class }}
+                {{ form.therapeutic_class.errors }}
+            </div>
+
+            <!-- Action Class -->
+            <div class="form-group">
+                <label for="{{ form.action_class.id_for_label }}">Action Class:</label>
+                {{ form.action_class }}
+                {{ form.action_class.errors }}
+            </div>
+
+            <!-- Batch Number -->
+            <div class="form-group">
+                <label for="{{ form.batch_no.id_for_label }}">Batch Number:</label>
+                {{ form.batch_no }}
+                {{ form.batch_no.errors }}
+            </div>
+
+            <!-- Manufacturing Date -->
+            <div class="form-group">
+                <label for="{{ form.mfg_date.id_for_label }}">Manufacture Date:</label>
+                <input type="text" id="id_mfg_date" name="{{ form.mfg_date.name }}" readonly
+                    value="{{ medicine.mfg_date|date:'d-m-Y' }}">
+                {{ form.mfg_date.errors }}
+                <span id="mfg_date_error" class="errorlist"></span> <!-- Error message container for mfg_date -->
+            </div>
+
+            <!-- Expiry Date -->
+            <div class="form-group">
+                <label for="{{ form.exp_date.id_for_label }}">Expiration Date:</label>
+                <input type="text" id="id_exp_date" name="{{ form.exp_date.name }}" readonly
+                    value="{{ medicine.exp_date|date:'d-m-Y' }}">
+                {{ form.exp_date.errors }}
+                <span id="exp_date_error" class="errorlist"></span> <!-- Error message container for exp_date -->
+            </div>
+
+            <!-- In Stock -->
+            <div class="form-group">
+                <label for="{{ form.in_stock.id_for_label }}">In Stock:</label>
+                {{ form.in_stock }}
+                {{ form.in_stock.errors }}
+                <span id="in_stock_error" class="errorlist"></span> <!-- Error message container for in_stock -->
+            </div>
+
+            <!-- Wholesale Price -->
+            <div class="form-group">
+                <label for="{{ form.wholesale_price.id_for_label }}">Wholesale Price:</label>
+                {{ form.wholesale_price }}
+                {{ form.wholesale_price.errors }}
+                <span id="wholesale_price_error" class="errorlist"></span> <!-- Error message container for wholesale_price -->
+            </div>
+
+            <!-- New Medicine Image -->
+            <div class="form-group">
+                <label for="{{ form.medicine_image.id_for_label }}">New Medicine Image:</label>
+                {{ form.medicine_image }}
+                {{ form.medicine_image.errors }}
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="updateMedicineBtn">Update Medicine</button>
+        </form>
+    </div>
+</section>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#edit-medicine-form').submit(function (e) {
+            // Custom validation logic using jQuery
+            // You can add more validation as needed
+
+            // Check if MRP is a positive number
+            var mrp = parseFloat($('#{{ form.mrp.id_for_label }}').val());
+            if (isNaN(mrp) || mrp <= 0) {
+                e.preventDefault();
+                $('#mrp_error').text('MRP must be a positive number.');
+            } else {
+                $('#mrp_error').text('');
+            }
+
+            // Check if Manufacturing Date is a valid date
+            var mfgDate = $('#id_mfg_date').val();
+            if (!isValidDate(mfgDate)) {
+                e.preventDefault();
+                $('#mfg_date_error').text('Invalid Manufacturing Date.');
+            } else {
+                $('#mfg_date_error').text('');
+            }
+
+            // Check if Expiry Date is a valid date
+            var expDate = $('#id_exp_date').val();
+            if (!isValidDate(expDate)) {
+                e.preventDefault();
+                $('#exp_date_error').text('Invalid Expiration Date.');
+            } else {
+                $('#exp_date_error').text('');
+            }
+
+            // Check if In Stock is a positive integer
+            var inStock = parseInt($('#{{ form.in_stock.id_for_label }}').val());
+            if (isNaN(inStock) || inStock < 0) {
+                e.preventDefault();
+                $('#in_stock_error').text('In Stock must be a non-negative integer.');
+            } else {
+                $('#in_stock_error').text('');
+            }
+
+            // Check if Wholesale Price is a positive number
+            var wholesalePrice = parseFloat($('#{{ form.wholesale_price.id_for_label }}').val());
+            if (isNaN(wholesalePrice) || wholesalePrice < 0) {
+                e.preventDefault();
+                $('#wholesale_price_error').text('Wholesale Price must be a non-negative number.');
+            } else {
+                $('#wholesale_price_error').text('');
+            }
+
+            // Add more validation as needed
+
+            // Example: Validate other fields, show errors, and prevent form submission if needed
+            // if ($('#some_field_id').val() === '') {
+            //     e.preventDefault();
+            //     $('#some_field_error').text('This field is required.');
+            // } else {
+            //     $('#some_field_error').text('');
+            // }
+        });
+
+        // Function to check if a date is valid
+        function isValidDate(dateString) {
+            var regex = /^\d{2}-\d{2}-\d{4}$/;
+            return dateString.match(regex) !== null;
+        }
+    });
+</script>
+
+{% endblock content %}

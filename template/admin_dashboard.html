@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Admin Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            margin: 0;
+            position: relative;
+        }
+
+        .dashboard-btn {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            position: absolute;
+            top: 10px;
+        }
+
+        .medical-representative-register {
+            right: 1000px;
+        }
+
+        .purchase-orders-link {
+            right: 150px;
+        }
+
+        .employee {
+            right: 275px;
+        }
+
+        .logout-button {
+            right: 95px;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-top: 20px;
+        }
+
+        .chart-container {
+            display: flex;
+            justify-content: center; /* Center the charts horizontally */
+            margin: 20px 0;
+        }
+
+        .chart {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 45%;
+            margin: 0 10px; /* Add some space between charts */
+        }
+
+
+        canvas {
+            max-width: 100%;
+            /* Make the chart responsive */
+        }
+
+        h2.user-list {
+            margin-top: 30px;
+        }
+
+        table.user-list {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #ccc;
+        }
+
+        table.user-list th,
+        table.user-list td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+
+        table.user-list th {
+            background-color: #333;
+            color: #fff;
+        }
+
+        tr.user {
+            background-color: #fff;
+        }
+
+        tr.user:nth-child(even) {
+            background-color: #f0f0f0;
+        }
+
+        button.deactivate,
+        button.activate {
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+        }
+
+        button.deactivate {
+            background-color: #f00;
+        }
+
+        button.activate {
+            background-color: #0f0;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Include Chart.js from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Include decimal.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/decimal.js"></script>
+
+    <h1>Admin Dashboard
+        <button class="dashboard-btn employee" onclick="location.href='{% url 'employee_register' %}'">Employee
+            Register</button>
+        <button class="dashboard-btn medical-representative-register"
+            onclick="location.href='{% url 'medical_representative_register' %}'">Medical Representative
+            register</button>
+
+        <button class="dashboard-btn purchase-orders-link" onclick="location.href='{% url 'purchase_orders' %}'">Purchase
+            Orders</button>
+        <button class="dashboard-btn logout-button" onclick="location.href='{% url 'logout' %}'">Logout</button>
+    </h1>
+    {% if low_stock_medicines %}
+    <h2>Low Stock Medicines</h2>
+    <table class="user-list">
+        <thead>
+            <tr>
+                <th>Medicine Name</th>
+                <th>In Stock</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for medicine in low_stock_medicines %}
+            <tr>
+                <td>{{ medicine.medicine_name }}</td>
+                <td>{{ medicine.in_stock }}</td>
+                <td>
+                    {% if medicine.medicine_id %}
+                    <p>{{ medicine.id }} <a href="{% url 'place_order' medicine.medicine_id %}">Place Order</a></p>
+                    {% else %}
+                    <p>No valid medicine ID</p>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+    <div class="chart-container">
+        <div class="chart">
+            <h2>Revenue Graph</h2>
+            <canvas id="revenue-chart" width="400" height="200"></canvas>
+        </div>
+
+        <div class="chart">
+            <h2>Profit Graph</h2>
+            <canvas id="profit-chart" width="400" height="200"></canvas>
+        </div>
+    </div>
+    
+    <h2 class="user-list">Users</h2>
+    <table class="user-list">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Name</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.username }}</td>
+                <td>{{ user.name }}</td>
+                <td>
+                    {% if user.is_active %}
+                    Active
+                    {% else %}
+                    Inactive
+                    {% endif %}
+                </td>
+                <td>
+                    <form method="post" action="{% url 'admin_dashboard' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="action"
+                            value="{% if user.is_active %}deactivate_user{% else %}activate_user{% endif %}">
+                        <input type="hidden" name="user_id" value="{{ user.id }}">
+                        <button class="{% if user.is_active %}deactivate{% else %}activate{% endif %}" type="submit">
+                            {% if user.is_active %}
+                            Deactivate
+                            {% else %}
+                            Activate
+                            {% endif %}
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        {{ revenue_data.labels | safe }}
+    </table>
+
+    <script>
+        
+        // Revenue Graph
+        var revenueCtx = document.getElementById('revenue-chart').getContext('2d');
+        new Chart(revenueCtx, {
+            type: 'line',
+            data: {
+                labels: {{ revenue_data.labels | safe }},
+                datasets: [{
+                    label: 'Revenue',
+                    data: {{ revenue_data.values | safe }},
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1,
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Profit Graph
+        var profitCtx = document.getElementById('profit-chart').getContext('2d');
+        new Chart(profitCtx, {
+            type: 'line',
+            data: {
+                labels: {{ profit_data.labels | safe }},
+                datasets: [{
+                    label: 'Profit',
+                    data: {{ profit_data.values | safe }},
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1,
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,16 @@
+<!-- main_project/templates/main_project/order_details.html -->
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+  <h2>Order Details</h2>
+  <p>Order ID: {{ order.id }}</p>
+  <p>Total Amount: {{ order.total_amount }}</p>
+  <p>Order Date: {{ order.order_date }}</p>
+
+  <h3>Order Items:</h3>
+  <ul>
+    {% for order_item in order_items %}
+      <li>{{ order_item.medicine.medicine_name }} - Quantity: {{ order_item.quantity }}</li>
+    {% endfor %}
+  </ul>
+{% endblock %}

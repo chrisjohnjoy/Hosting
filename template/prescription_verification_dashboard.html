@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    /* Style the page container */
+    .container-7 {
+        padding: 20px;
+    }
+
+    /* Style the table */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+    }
+
+    table, th, td {
+        border: 1px solid #ccc;
+        text-align: left;
+    }
+
+    th {
+        background-color: #f5f5f5;
+        font-weight: bold;
+    }
+
+    table th, table td {
+        padding: 10px;
+    }
+
+    /* Style the "Open Prescription" links */
+    a {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+    /* Style the "Verify" button */
+    .verify-button {
+        background-color: #28a745;
+        color: #fff;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .verify-button:hover {
+        background-color: #218838;
+    }
+
+    /* Style headers and sections */
+    h2 {
+        margin-top: 20px;
+        font-size: 24px;
+    }
+
+    /* Style the "Not Applicable" text */
+    .not-applicable {
+        color: #999;
+    }
+</style>
+
+<div class="container-7">
+    <h2>Verified Prescriptions</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Prescription ID</th>
+                <th>Uploaded By</th>
+                <th>Verified By</th>
+                <th>Verification Time</th>
+                <th>Open Prescription</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for prescription in verified_prescriptions %}
+            <tr>
+                <td>{{ prescription.id }}</td>
+                <td>{{ prescription.cart.user.username }}</td>
+                <td>
+                    {% if prescription.prescriptionverification_set.all %}
+                        {{ prescription.prescriptionverification_set.first.verified_by }}
+                    {% else %}
+                        <span class="not-applicable">Not Applicable</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if prescription.prescriptionverification_set.all %}
+                        {{ prescription.prescriptionverification_set.first.verified_at }}
+                    {% else %}
+                        <span class="not-applicable">Not Applicable</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{{ prescription.prescription_file.url }}" target="_blank">Open Prescription</a>
+                </td>
+            </tr>
+        
+            {% endfor %}
+        </tbody>
+        
+    </table>
+
+    <h2>Unverified Prescriptions</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Prescription ID</th>
+                <th>Uploaded By</th>
+                <th>Verification Status</th>
+                <th>Open Prescription</th>
+                <th>Verify</th>  {# Add a "Verify" column #}
+            </tr>
+        </thead>
+        <tbody>
+            {% for prescription in unverified_prescriptions %}
+            <tr>
+                <td>{{ prescription.id }}</td>
+                <td>{{ prescription.cart.user.username }}</td>
+                <td>Not Verified</td>
+                <td>
+                    <a href="{{ prescription.prescription_file.url }}" target="_blank">Open Prescription</a>
+                </td>
+                <td>
+                    <form method="POST" action="{% url 'verify_prescription' prescription.id %}">
+                        {% csrf_token %}
+                        <button class="verify-button">Verify</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

@@ -1,0 +1,48 @@
+
+<div class="container-7">
+    <h2 class="success-heading">Payment Successful</h2>
+    <p class="success-message">Thank you for your order, {{ order.user.customer.name }}!</p>
+    <p class="success-message">Your payment was successful, and your order is confirmed.</p>
+  
+    <div class="details-section">
+      <p>Medicines:</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Medicine</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Expiry Date</th> <!-- Add this line for expiry date -->
+          </tr>
+        </thead>
+        <tbody>
+          {% for order_item in order.orderitem_set.all %}
+          <tr>
+            <td>{{ order_item.medicine.medicine_name }}</td>
+            <td>{{ order_item.quantity }}</td>
+            <td>₹{{ order_item.medicine.mrp }}</td>
+            <td>{{ order_item.medicine.exp_date }}</td> <!-- Add this line for expiry date -->
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  
+    <div class="details-section">
+      <p>Order details:</p>
+      <ul>
+        <li>Order ID: {{ order.id }}</li>
+        <li>Total Amount: ₹{{ order.total_amount }}</li>
+        <li>Order Date: {{ order.order_date }}</li>
+        <li>Delivery Date: {{ order.delivery_date }}</li>
+      </ul>
+    </div>
+  
+    <div class="details-section">
+      <p>Customer details:</p>
+      <ul>
+        <li>Name: {{ order.user.customer.name }}</li>
+        <li>Phone Number: {{ order.user.customer.phone_number }}</li>
+        <li>Address: {{ order.user.customer.address }}</li>
+      </ul>
+    </div>

@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block content %}
+<head>
+  <style>
+    /* Add your custom CSS styles here */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    /* You can add more custom styling as needed */
+    .container-o {
+      max-width: 600px;
+      margin-top: 10px;
+      margin-left: 25%;
+      margin-bottom: 10px;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Style the heading for profile information */
+    .container h2 {
+      font-size: 24px;
+      color: #007bff;
+      margin-bottom: 20px;
+    }
+
+    /* Style form labels */
+    label {
+      font-weight: bold;
+    }
+
+    /* Style input fields */
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    /* Style the "Change Password" button */
+    .btn-secondary-imi {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      text-decoration: none;
+    }
+
+    .btn-secondary-imi:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<div class="container-o">
+  <h2>Profile Information</h2>
+
+  <!-- Add message rendering code here -->
+  {% if messages %}
+    <ul class="messages">
+      {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+  <!-- End message rendering code -->
+
+  <form method="post">
+    {% csrf_token %}
+    
+    <div class="form-group">
+      <label for="{{ form.name.id_for_label }}">Name:</label>
+      <input type="text" class="form-control" id="{{ form.name.id_for_label }}" name="name" value="{{ form.name.value }}" readonly>
+    </div>
+
+    <div class="form-group">
+      <label for="{{ form.email.id_for_label }}">Email:</label>
+      <input type="email" class="form-control" id="{{ form.email.id_for_label }}" name="email" value="{{ form.email.value }}" readonly>
+    </div>
+
+    <div class="form-group">
+      <label for="{{ form.password.id_for_label }}">Password:</label>
+      <div class="input-group">
+        <input type="password" class="form-control" id="{{ form.password.id_for_label }}" value="********" readonly>
+        <div class="input-group-append">
+          <a href="{% url 'change_password' %}" class="btn btn-secondary-imi">Change Password</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="{{ form.phone_number.id_for_label }}">Phone Number:</label>
+      <input type="text" class="form-control" id="{{ form.phone_number.id_for_label }}" name="phone_number" value="{{ form.phone_number.value }}">
+    </div>
+
+    <div class="form-group">
+      <label for="{{ form.address.id_for_label }}">Address:</label>
+      <textarea class="form-control" id="{{ form.address.id_for_label }}" name="address">{{ form.address.value }}</textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Update Profile</button>
+  </form>
+</div>
+{% endblock %}

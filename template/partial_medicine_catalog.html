@@ -1,0 +1,96 @@
+<!-- partial_medicine_catalog.html -->
+
+<div class="row">
+    {% for medicine in medicines %}
+        <div class="col-md-4">
+            <div class="medicine-card">
+                <a href="{% url 'medicine_details' medicine_id=medicine.medicine_id %}">
+                    <img src="{{ medicine.medicine_image.url }}" alt="{{ medicine.medicine_name }}" class="medicine-image">
+                    <h3 class="medicine-name">{{ medicine.medicine_name }} {% if medicine.salt %}({{ medicine.salt }}){% endif %}</h3>
+                </a>      
+                <p class="medicine-description">{{ medicine.how_it_works }}</p>
+                <p class="medicine-price">Price: ₹{{ medicine.mrp }}</p>
+
+                {% if user.is_authenticated %}
+                    {% if user.is_employee %}
+                        <p class="medicine-stock">Stock: {{ medicine.in_stock }}</p>
+                        <div class="medicine-actions">
+                            <a href="{% url 'edit_medicine' medicine.medicine_id %}" class="btn btn-primary btn-sm">Edit</a>
+                            <a href="{% url 'delete_medicine' medicine.medicine_id %}" class="btn btn-danger btn-sm">Delete</a>
+                        </div>
+                    {% elif user.is_customer %}
+                        {% if medicine.in_stock >= 1 %}
+                            <p class="medicine-stock">In Stock</p>
+                            <div class="add-to-cart-form" id="add-to-cart-{{ medicine.medicine_id }}">
+                                {% if medicine.requires_prescription %}
+                                    <p class="medicine-prescription">Prescription Required</p>
+                                {% endif %}
+                                <form method="post" action="{% url 'add_to_cart' medicine.medicine_id %}" id="add-to-cart-form-{{ medicine.medicine_id }}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-primary btn-sm">Add to Cart</button>
+                                </form>
+                            </div>
+                        {% else %}
+                            <p class="medicine-stock">Out of Stock</p>
+                            <div class="out-of-stock-warning">
+                                <p>This product is currently out of stock.</p>
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                {% else %}
+                    <p class="medicine-stock">
+                        <a href="{% url 'login' %}">Log in to buy</a>
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<!-- Pagination -->
+<div class="pagination">
+    <span>Page {{ medicines.number }} of {{ medicines.paginator.num_pages }}.</span>
+    <ul>
+        {% if medicines.has_previous %}
+            <li><a href="#" class="ajax-pagination" data-page="1">First</a></li>
+            <li><a href="#" class="ajax-pagination" data-page="{{ medicines.previous_page_number }}">Previous</a></li>
+        {% endif %}
+
+        {% for num in medicines.paginator.page_range %}
+            {% if num > medicines.number|add:"-2" and num < medicines.number|add:"3" %}
+                <li {% if num == medicines.number %}class="current-page" {% endif %}>
+                    <a href="#" class="ajax-pagination" data-page="{{ num }}">{{ num }}</a>
+                </li>
+            {% endif %}
+        {% endfor %}
+
+        {% if medicines.has_next %}
+            <li><a href="#" class="ajax-pagination" data-page="{{ medicines.next_page_number }}">Next</a></li>
+            <li><a href="#" class="ajax-pagination" data-page="{{ medicines.paginator.num_pages }}">Last</a></li>
+        {% endif %}
+    </ul>
+</div>
+
+<script>
+    // Add jQuery or use vanilla JavaScript to handle AJAX pagination
+    $(document).ready(function () {
+        $('.ajax-pagination').on('click', function (e) {
+            e.preventDefault();
+            var page = $(this).data('page');
+
+            // Perform an AJAX request to fetch the updated content
+            $.ajax({
+                url: window.location.pathname + '?page=' + page,
+                type: 'get',
+                dataType: 'json',  // Assuming your view returns JSON data
+                success: function (data) {
+                    // Replace the content with the updated HTML
+                    $('.medicine-catalog').html(data.html_content);
+                },
+                error: function () {
+                    // Handle errors if needed
+                }
+            });
+        });
+    });
+</script>

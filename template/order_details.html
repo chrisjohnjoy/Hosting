@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+  /* Style the container */
+  .container-order-tracking {
+    margin: 20px 10% 0;
+    max-width: 80%;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+
+  /* Style the order tracking heading */
+  .order-tracking-heading {
+    color: #333;
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+
+  /* Style the order details table */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+
+  th, td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+  }
+
+  th {
+    background-color: #f5f5f5;
+  }
+
+  /* Style the prescription verification section */
+  .prescription-verification {
+    margin-top: 20px;
+  }
+
+  /* Style the prescription status */
+  .prescription-status {
+    font-weight: bold;
+    color: green; /* You can customize the color based on your design */
+  }
+
+  /* Style the additional links */
+  .additional-links {
+    margin-top: 20px;
+  }
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+
+  li {
+    margin-bottom: 10px;
+  }
+</style>
+
+<div class="container-order-tracking">
+  <h2 class="order-tracking-heading">Order Tracking</h2>
+  <p>Order ID: {{ order.id }}</p>
+ <!-- Order Items Table -->
+ <h3>Order Items</h3>
+ <table>
+   <thead>
+     <tr>
+       <th>Medicine Image</th>
+       <th>Medicine Name</th>
+       <th>Quantity</th>
+       <th>Expiry Date</th>
+     </tr>
+   </thead>
+   <tbody>
+     {% for item in order_items %}
+       <tr>
+         <td>
+           <img src="{{ item.medicine.medicine_image.url }}" alt="{{ item.medicine.medicine_name }}" style="max-width: 50px; max-height: 50px;">
+         </td>
+         <td>{{ item.medicine.medicine_name }}</td>
+         <td>{{ item.quantity }}</td>
+         <td>{{ item.medicine.exp_date|default:"Not available" }}</td>
+       </tr>
+     {% endfor %}
+   </tbody>
+ </table>
+
+
+  <!-- Additional tracking information -->
+<h3>Delivery Status</h3>
+<p>Delivery Status: {{ delivery_status }}</p>
+<!-- Add more delivery details if needed -->
+
+
+  <!-- Additional links or information -->
+  <h3>Additional Links</h3>
+  <div class="additional-links">
+    <ul>
+      <!-- Add more links if needed -->
+      <li><a href="{% url 'download_invoice' order.id %}">Download Invoice</a></li>
+    </ul>
+  </div>
+
+</div>
+{% endblock %}

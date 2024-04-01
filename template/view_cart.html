@@ -1,0 +1,278 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<head>
+    <!-- Add this CSS code to your HTML file, preferably in a <style> tag or an external CSS file -->
+    <style>
+        /* Style the page container */
+        .container_7 {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        /* Style the table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f5f5f5;
+        }
+
+        /* Style the "Total Price" paragraph */
+        .cart-total {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        /* Style the "Reset Cart" button */
+        .reset-cart-button {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin-top: 10px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .reset-cart-button:hover {
+            background-color: #ff6347;
+        }
+
+        /* Center-align the "Reset Cart" button */
+        .reset-cart-container {
+            text-align: center;
+        }
+
+        /* Style the quantity buttons */
+        .quantity-button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .quantity-button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Style the quantity input field */
+        .update-cart-input {
+            width: 40px;
+            text-align: center;
+        }
+
+        .prescription-upload {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin-top: 20px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+        }
+
+        /* Style for the prescription form */
+        .prescription-form {
+            margin-top: 10px;
+        }
+
+        /* Style for the "Upload Prescription" button */
+        .upload-prescription-button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .upload-prescription-button:hover {
+            background-color: #0056b3;
+        }
+        /* Add this CSS to your <style> tag or an external CSS file */
+
+/* Style the checkout button container */
+.checkout-button {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+}
+
+/* Style the "Reset Cart" button */
+.reset-cart-button {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-right: 10px; /* Add margin to separate the buttons */
+}
+
+.reset-cart-button:hover {
+    background-color: #ff6347;
+}
+
+/* Style the "Checkout" button */
+.btn.btn-primary.btn-lg {
+    margin: 0; /* Remove default margin to make it align with the "Reset Cart" button */
+}
+
+    </style>
+
+<script>
+    $(document).ready(function () {
+        // Attach click event listeners to the quantity buttons
+        $('.quantity-button').on('click', function (e) {
+            const $button = $(this);
+            const $form = $button.closest('form');
+            const $input = $form.find('.update-cart-input');
+            const operation = $button.data('operation');
+            let quantity = parseInt($input.val());
+            const maxQuantity = parseInt($input.attr('max')); // Get the maximum quantity from the 'max' attribute
+
+            if (operation === 'increase' && quantity < maxQuantity) {
+                quantity += 1;
+            } else if (operation === 'decrease' && quantity > 1) {
+                quantity -= 1;
+            }
+
+            $input.val(quantity); // Update the input field with the new quantity
+            $input.trigger('input'); // Trigger the input event to update the cart via AJAX
+        });
+
+        // Attach an input event listener to the quantity inputs
+        $('.update-cart-input').on('input', function (e) {
+            const $input = $(this);
+            const $form = $input.closest('form');
+            const formData = $form.serialize();
+
+            $.ajax({
+                type: 'POST',
+                url: $form.attr('action'),
+                data: formData,
+                success: function (data) {
+                    // Update the individual item total
+                    $form.closest('tr').find('.item-total').html('₹' + data.item_total);
+
+                    // Update the overall total and grand total
+                    $('.cart-total p').html('Total: ₹' + data.total);
+                    $('.grand-total p').html('Grand Total: ₹' + data.grand_total);
+
+                    // Add any other updates you need here
+                },
+            });
+        });
+    });
+</script>
+</head>
+<div class="container_7">
+    <h2>Your Cart</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Medicine</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Add this section inside the for loop that iterates over cart items -->
+            {% for cart_item in cart_items %}
+            <tr>
+                <td>{{ cart_item.medicine.medicine_name }}</td>
+                <td>₹{{ cart_item.medicine.mrp }}</td>
+                <td>
+                    <form method="POST" action="{% url 'update_cart' cart_item.medicine.medicine_id %}">
+                        {% csrf_token %}
+                        <button type="button" class="quantity-button" data-operation="decrease">-</button>
+                        <input type="number" name="quantity" value="{{ cart_item.quantity }}" min="1"
+                            max="{{ cart_item.medicine.in_stock }}" class="update-cart-input" readonly>
+                        <button type="button" class="quantity-button" data-operation="increase">+</button>
+                    </form>
+                </td>
+                <td class="item-total">₹{{ cart_item.get_total_price }}</td>
+                <td>
+                    <a href="{% url 'remove_from_cart' cart_item.medicine.medicine_id %}"
+                        class="btn btn-danger btn-sm">Remove</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <!-- Display Grand Total and Reset Cart button -->
+    {% if cart_items %}
+    <div class="grand-total">
+        <p style="color: black;">Grand Total: ₹{{ cart.get_total_price }}</p>
+    </div>
+    {% if cart_requires_prescription %}
+    <div class="prescription-upload">
+        <h3>Prescription Upload</h3>
+        <p>If any medicine in your cart requires a prescription, you can upload it here. Only one prescription is allowed for the entire cart.</p>
+        <form method="POST" enctype="multipart/form-data" action="{% url 'upload_prescription' %}" class="prescription-form">
+            {% csrf_token %}
+            {{ prescription_form.as_p }}
+            <button type="submit" class="upload-prescription-button">Upload Prescription</button>
+        </form>
+        {% if prescription %}  {# Check if a prescription exists for the cart #}
+            <div class="uploaded-prescription">
+                <h4>Uploaded Prescription:</h4>
+                <p>Prescription File: <a href="{{ prescription.prescription_file.url }}" target="_blank">{{ prescription.prescription_file.name }}</a></p>
+            </div>
+        {% endif %}
+    </div>
+{% endif %}
+{{ prescription_form.non_field_errors }}
+{{ prescription_form.prescription_file.errors }}
+<!-- Existing code... -->
+<div class="checkout-button">
+    <form method="post" action="{% url 'reset_cart' %}">
+        {% csrf_token %}
+        <button type="submit" class="reset-cart-button">Reset Cart</button>
+    </form>
+    {% if cart_requires_prescription %}
+        {% if prescription %}
+            {% if prescription.is_verified %}
+                <p style="color: blue">Prescription is verified</p>
+                <a href="{% url 'checkout' %}" class="btn btn-primary btn-lg">Checkout</a>
+            {% else %}
+                <p style="color: red;">Prescription is pending verification. You can place the order, and verification will be done afterward.</p>
+                <a href="{% url 'checkout' %}" class="btn btn-primary btn-lg">Checkout</a>
+            {% endif %}
+        {% else %}
+            <p style="color: red;">Prescription is required before placing an order.</p>
+        {% endif %}
+    {% else %}
+                <a href="{% url 'checkout' %}" class="btn btn-primary btn-lg">Checkout</a>
+    {% endif %}
+</div>
+<!-- Existing code... -->
+{% else %}
+<p>Your cart is empty.</p>
+{% endif %}
+</div>
+{% endblock %}
+
+

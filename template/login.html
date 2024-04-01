@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% block content %}
+<style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+  
+    .content_9 {
+      background-color: #05dcf8; /* Your desired background color */
+      color: #fff; /* Text color on the background */
+      padding: 50px; /* Adjust as needed */
+      min-height: 100vh; /* Ensure the content covers the entire viewport height */
+    }
+    .errorlist
+    {
+        color: red;
+    }
+  </style>
+  
+<div class="content_9">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <img src="{% static 'login/images/undraw_remotely_2j6y.svg' %}" alt="Image" class="img-fluid">
+            </div>
+            <div class="col-md-6 contents">
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="mb-4">
+                            <h3>Sign In</h3>
+                        </div>
+                        <form method="post" action="{% url 'login' %}">
+                            {% csrf_token %}
+                            <div class="form-group first">
+                                <label for="{{ form.username.id_for_label }}">Username</label>
+                                {{ form.username|add_class:"form-control" }}
+                                {% for error in form.username.errors %}
+                                <p class="email" style="color: red;">{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                            <div class="form-group last mb-4">
+                                <label for="{{ form.password.id_for_label }}" name="password">Password</label>
+                                {{ form.password|add_class:"form-control" }}
+                                {% for error in form.password.errors %}
+                                <div class="parap">
+                                <p class="js" style="color: red;">{{ error }}</p>
+                                </div>
+                                {% endfor %}
+                                {% if form.non_field_errors %}
+                                <p class="error" style="color: red;">{{ form.non_field_errors }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="d-flex mb-5 align-items-center">
+                                <label class="control control--checkbox mb-0">
+                                    <span class="caption">Remember me</span>
+                                    <input type="checkbox" checked="checked" name="remember" />
+                                    <div class="control__indicator"></div>
+                                </label>
+                                <span class="ml-auto"><a href="#" class="forgot-pass">Forgot Password</a></span>
+                            </div>
+                            <input type="submit" value="Log In" class="btn btn-block btn-primary">
+                            <span class="d-block text-left my-4 text-muted">&mdash; or login with &mdash;</span>
+                            <div class="social-login">
+                                <a href="#" class="facebook">
+                                    <span class="icon-facebook mr-3"></span>
+                                </a>
+                                <a href="#" class="twitter">
+                                    <span class="icon-twitter mr-3"></span>
+                                </a>
+                                <a href="#" class="google">
+                                    <span class="icon-google mr-3"></span>
+                                </a>
+                            </div>
+                          
+                        </form>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

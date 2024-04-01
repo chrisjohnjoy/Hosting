@@ -1,0 +1,54 @@
+{% extends "layouts/base.html" %}
+{% block title %}Manufacturer Pie Chart{% endblock %}
+
+{% block content %}
+    <div style="width: 100%; margin: auto;">
+        <h2>Distribution of Medicines by Manufacturer</h2>
+        <!-- Canvas for rendering the pie chart -->
+        <canvas id="myPieChart"></canvas>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
+
+    <script>
+        
+        var labels = {{ labels | safe }};
+        var data = {{ data | safe }};
+        var backgroundColors = generateRandomColors(labels.length);
+        console.log(backgroundColors)
+
+        function generateRandomColors(count) {
+    var colors = [];
+    for (var i = 0; i < count; i++) {
+        var color = '#' + Math.floor(Math.random() * 16777215).toString(16);
+        colors.push(color); // Push the generated color into the array
+    }
+    return colors;
+}
+
+ // You can customize these colors as needed
+
+        // Shortened labels for the pie chart
+        var shortenedLabels = labels.map(function(label) {
+            return label.substring(0, 10); // Adjust the substring length as needed
+        });
+
+        // Pie Chart Configuration
+        var ctx = document.getElementById("myPieChart").getContext('2d');
+        var myPieChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: shortenedLabels,
+                datasets: [{
+                    data: data,
+                    backgroundColor: backgroundColors,
+                }]
+            },
+            options: {
+                legend: {
+                    display: true,
+                    position: 'bottom',
+                },
+            }
+        });
+    </script>
+{% endblock %}

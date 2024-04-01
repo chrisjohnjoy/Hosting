@@ -1,0 +1,37 @@
+{% extends "layouts/base.html" %}
+{% block title %} Low Stock Medicines {% endblock %}
+
+{% block content %}
+    <h1>Low Stock Medicines</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Medicine ID</th>
+                <th>Name</th>
+                <th>Stock Level</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for medicine in low_stock_medicines %}
+                <tr>
+                    <td>{{ medicine.medicine_id }}</td>
+                    <td>{{ medicine.medicine_name }}</td>
+                    <td>{{ medicine.in_stock }}</td>
+                    <td>
+                        
+                        {% if medicine.medicine_id in purchase_order_med_ids %}
+                            Order Placed
+                        {% else %}
+                            <form method="POST" action="{% url 'save_order' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="productId" value="{{ medicine.medicine_id }}">
+                                <button type="submit">Order Stock</button>
+                            </form>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

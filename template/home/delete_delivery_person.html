@@ -1,0 +1,31 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Delete Delivery Personnel{% endblock %}
+
+{% block content %}
+    <div class="container-fluid px-4">
+        <h1 class="mt-4">Delete Delivery Personnel</h1>
+        <ol class="breadcrumb mb-4">
+            <li class="breadcrumb-item active">Delete</li>
+        </ol>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <i class="fas fa-trash me-1"></i>
+                        Delete Delivery Personnel
+                    </div>
+                    <div class="card-body">
+                        <p>Are you sure you want to delete "{{ delivery_person.user.name }}"?</p>
+                        <form method="POST">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                            <a href="{% url 'delivery_person_list' %}" class="btn btn-secondary">Cancel</a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

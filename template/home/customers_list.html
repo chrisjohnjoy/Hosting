@@ -1,0 +1,79 @@
+{% extends "layouts/base.html" %}
+{% block title %} Total Customers {% endblock %}
+
+{% block content %}
+<style>
+    .activation-button {
+        background-color: #28a745; /* Green color for activate */
+        color: #fff; /* White text color */
+        border: none; /* No border */
+        padding: 8px 16px; /* Padding for better appearance */
+        cursor: pointer; /* Cursor on hover */
+    }
+
+    .activation-button:hover {
+        background-color: #218838; /* Darker green color on hover */
+    }
+
+    .deactivation-button {
+        background-color: #dc3545; /* Red color for deactivate */
+        color: #fff; /* White text color */
+        border: none; /* No border */
+        padding: 8px 16px; /* Padding for better appearance */
+        cursor: pointer; /* Cursor on hover */
+    }
+
+    .deactivation-button:hover {
+        background-color: #c82333; /* Darker red color on hover */
+    }
+</style>
+    <h1>Total Customers</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Phone Number</th>
+                <th>Address</th>
+                <th>Is Active</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.user.id }}</td>
+                    <td>{{ user.user.username }}</td>
+                    <td>{{ user.user.email }}</td>
+                    <td>{{ user.phone_number }}</td>
+                    <td>{{ user.address }}</td>
+                    <td>{{ user.user.is_active }}</td>
+                    <td>
+                        <form method="post" action="{% url 'total_customers' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="action"
+                                value="{% if user.user.is_active %}deactivate_user{% else %}activate_user{% endif %}">
+                            <input type="hidden" name="user_id" value="{{ user.user.id }}">
+                            <button type="submit">
+                                {% if user.user.is_active %}
+                                    Deactivate
+                                {% else %}
+                                    Activate
+                                {% endif %}
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+
+
+{% block javascripts %}
+    <!-- Include any specific scripts for this page if needed -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" crossorigin="anonymous"></script>
+    <script src="/static/assets/js/datatables-simple-demo.js"></script>
+{% endblock javascripts %}

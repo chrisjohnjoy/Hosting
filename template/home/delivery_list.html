@@ -1,0 +1,52 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Delivery Personnel List{% endblock %}
+
+{% block content %}
+    <div class="container-fluid px-4">
+        <h1 class="mt-4">Delivery Personnel List</h1>
+        <ol class="breadcrumb mb-4">
+            <li class="breadcrumb-item active">View Delivery Personnel</li>
+        </ol>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <i class="fas fa-table me-1"></i>
+                        Delivery Personnel
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Contact Information</th>
+                                        <th>Vehicle Details</th>
+                                        <th>Actions</th>  <!-- Column for edit and delete buttons -->
+                                        <!-- Add more columns as needed -->
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for personnel in delivery_personnel %}
+                                        <tr>
+                                            <td>{{ personnel.user.name }}</td>  <!-- Accessing the name from the associated User model -->
+                                            <td>{{ personnel.phone_number }}</td>
+                                            <td>{{ personnel.vehicle_number }}</td>
+                                            <td>
+                                                <a href="{% url 'edit_delivery_person' personnel.pk %}" class="btn btn-primary">Edit</a>
+                                                <a href="{% url 'delete_delivery_person' personnel.pk %}" class="btn btn-danger">Delete</a>
+                                            </td>
+                                            <!-- Add more columns as needed -->
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

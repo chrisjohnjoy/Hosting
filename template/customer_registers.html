@@ -1,0 +1,233 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <title>Customer Registration</title>
+
+    <style>
+        /* Internal CSS styles */
+        .registration-block {
+            background-color: #ffffff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 20px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+            width: 700px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: inline-block;
+            width: 30%;
+            text-align: right;
+            margin-right: 10px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="email"],
+        select {
+            display: inline-block;
+            width: 65%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #0074cc;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 3px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056a7;
+        }
+
+        .error-message {
+            color: #FF0000;
+            font-size: 14px;
+            text-align: left;
+            width: 65%;
+            margin-top: 5px;
+            display: inline-block;
+        }
+    </style>
+
+    <!-- Include jQuery library -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <!-- Your existing HTML content -->
+    <body>
+        <div class="registration-block">
+            <h2>Customer Registration</h2>
+            <form method="post" id="customer-registration-form">
+                {% csrf_token %}
+                <!-- Email Field -->
+                <div class="form-group email">
+                    <label for="{{ form.email.id_for_label }}">Email:</label>
+                    <input type="email" id="{{ form.email.id_for_label }}" name="{{ form.email.name }}" required>
+                    <span class="error-message" id="{{ form.email.id_for_label }}-error"></span>
+                </div>
+                <!-- Username Field -->
+                <div class="form-group">
+                    <label for="{{ form.username.id_for_label }}">Username:</label>
+                    <input type="text" id="{{ form.username.id_for_label }}" name="{{ form.username.name }}" required>
+                    <span class="error-message" id="{{ form.username.id_for_label }}-error"></span>
+                </div>
+
+                <!-- Password Field -->
+                <div class="form-group">
+                    <label for="{{ form.password1.id_for_label }}">Password:</label>
+                    <input type="password" id="{{ form.password1.id_for_label }}" name="{{ form.password1.name }}"
+                        required>
+                    <span class="error-message" id="{{ form.password1.id_for_label }}-error"></span>
+                </div>
+                <!-- Confirm Password -->
+                <div class="form-group">
+                    <label for="{{ form.password2.id_for_label }}">Confirm Password:</label>
+                    <input type="password" id="{{ form.password2.id_for_label }}" name="{{ form.password2.name }}"
+                        required>
+                    <span class="error-message" id="{{ form.password2.id_for_label }}-error"></span>
+                </div>
+
+                <!-- Name Field -->
+                <div class="form-group">
+                    <label for="{{ form.name.id_for_label }}">Name:</label>
+                    <input type="text" id="{{ form.name.id_for_label }}" name="{{ form.name.name }}" required>
+                    <span class="error-message" id="{{ form.name.id_for_label }}-error"></span>
+                </div>
+
+                <!-- Phone Number Field -->
+                <div class="form-group">
+                    <label for="{{ form.phone_number.id_for_label }}">Phone Number:</label>
+                    <input type="text" id="{{ form.phone_number.id_for_label }}" name="{{ form.phone_number.name }}"
+                        required>
+                    <span class="error-message" id="{{ form.phone_number.id_for_label }}-error"></span>
+                </div>
+
+                <!-- Address Field -->
+                <div class="form-group">
+                    <label for="{{ form.address.id_for_label }}">Address:</label>
+                    <input type="text" id="{{ form.address.id_for_label }}" name="{{ form.address.name }}" required>
+                    <span class="error-message" id="{{ form.address.id_for_label }}-error"></span>
+                </div>
+                <div>
+                    {{ form.errors }}
+                    {{ form.address.errors }}
+                </div>
+                <button type="submit">Register</button>
+            </form>
+        </div>
+
+        <script>
+            $(document).ready(function () {
+                // Function to display error messages
+                function displayError(fieldId, errorMessage) {
+                    $("#" + fieldId + "-error").text(errorMessage);
+                }
+
+                // Function to clear error messages
+                function clearError(fieldId) {
+                    $("#" + fieldId + "-error").text('');
+                }
+
+                // Email validation
+                $('#{{ form.email.id_for_label }}').on('input', function () {
+                    var emailInput = $(this);
+                    clearError(emailInput.attr('id'));
+                    var email = emailInput.val();
+                    if (email.length > 0) {
+                        var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                        if (!emailRegex.test(email)) {
+                            displayError(emailInput.attr('id'), 'Invalid email address');
+                        }
+                    }
+                });
+
+                // Username validation
+                $('#{{ form.username.id_for_label }}').on('input', function () {
+                    var usernameInput = $(this);
+                    clearError(usernameInput.attr('id'));
+                    var username = usernameInput.val();
+                    if (username.length === 0) {
+                        displayError(usernameInput.attr('id'), 'Username is required');
+                    }
+                });
+
+                // Password validation
+                $('#{{ form.password1.id_for_label }}').on('input', function () {
+                    var passwordInput = $(this);
+                    clearError(passwordInput.attr('id'));
+                    var password = passwordInput.val();
+                    if (password.length > 0 && password.length < 8) {
+                        displayError(passwordInput.attr('id'), 'Password should be at least 8 characters');
+                    }
+                });
+
+                // Confirm Password validation
+                $('#{{ form.password2.id_for_label }}').on('input', function () {
+                    var confirmPasswordInput = $(this);
+                    clearError(confirmPasswordInput.attr('id'));
+                    var confirmPassword = confirmPasswordInput.val();
+                    var password = $('#{{ form.password1.id_for_label }}').val();
+                    if (confirmPassword.length > 0 && confirmPassword !== password) {
+                        displayError(confirmPasswordInput.attr('id'), 'Passwords do not match');
+                    }
+                });
+
+                $('#{{ form.name.id_for_label }}').on('input', function () {
+                    var nameInput = $(this);
+                    clearError(nameInput.attr('id'));
+                    var name = nameInput.val();
+                    if (name.length === 0) {
+                        displayError(nameInput.attr('id'), 'Name is required');
+                    } else if (!/^[a-zA-Z]+$/.test(name)) {
+                        displayError(nameInput.attr('id'), 'Name should only contain alphabets');
+                    }
+                });
+
+                // Phone Number validation
+                $('#{{ form.phone_number.id_for_label }}').on('input', function () {
+                    var phoneInput = $(this);
+                    clearError(phoneInput.attr('id'));
+                    var phone = phoneInput.val();
+                    if (phone.length === 0) {
+                        displayError(phoneInput.attr('id'), 'Phone Number is required');
+                    } else if (!/^\d+$/.test(phone)) {
+                        displayError(phoneInput.attr('id'), 'Phone Number should only contain numbers');
+                    }
+                });
+
+                // Address validation
+                $('#{{ form.address.id_for_label }}').on('input', function () {
+                    var addressInput = $(this);
+                    clearError(addressInput.attr('id'));
+                    var address = addressInput.val();
+                    if (address.length === 0) {
+                        displayError(addressInput.attr('id'), 'Address is required');
+                    }
+                });
+
+                // Add more validations as needed
+            });
+        </script>
+    </body>
+{% endblock content %}

@@ -1,0 +1,87 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Manufacturer Products{% endblock %}
+
+{% block content %}
+    <style>
+        /* CSS styles go here */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            color: #333;
+        }
+        select, button {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        button {
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+            margin-left: 10px; /* Add margin to separate the buttons */
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 5px;
+        }
+        .product {
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .stock {
+            font-style: italic;
+            color: #888;
+        }
+    </style>
+
+    <div class="container">
+        <h1>Select Manufacturer</h1>
+        <form method="GET" action="{% url 'manufacturer_products' %}">
+            <select name="manufacturer">
+                {% for manufacturer in unique_manufacturers %}
+                    <option value="{{ manufacturer }}">{{ manufacturer }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Show Products</button>
+        </form>
+        
+        {% if selected_manufacturer %}
+            <h2>{{ selected_manufacturer }} Products</h2>
+            <ul>
+                {% for product in manufacturer_products %}
+                    <li class="product">{{ product.medicine_name }} - MRP: {{ product.mrp }} - Stock: <span class="stock">{{ product.in_stock }}</span>
+                        <form method="POST" action="{% url 'save_order' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="productId" value="{{ product.medicine_id }}">
+                            <button type="submit">Order Stock</button>
+                        </form>
+                                            </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+
+    
+{% endblock %}
